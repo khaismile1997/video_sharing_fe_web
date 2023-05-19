@@ -1,9 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { beApi } from "services/beAPI";
-
-// import { AuthService } from 'services/auth'
-// import { getAccessToken } from 'services/utils'
-// import { UserService } from 'services/user'
 import { beService } from "services/beService";
 import { getAccessToken } from "services/utils";
 
@@ -31,7 +27,8 @@ export const login = createAsyncThunk<
   { email: string; password: string },
   { state: any }
 >(`${NAME}/login`, async ({ email, password }, { getState }) => {
-  const { data } = await beService.login(email, password);
+  const { data, err } = await beService.login(email, password);
+  if (err) throw new Error(err?.message || "Unknown");
   beApi.defaults.headers["Authorization"] = `Bearer ${data.session_token}`;
 
   localStorage.setItem("session_token", data.session_token);
@@ -48,7 +45,8 @@ export const signup = createAsyncThunk<
   { state: any }
 >(`${NAME}/signup`, async ({ username, email, password }, { getState }) => {
   const { user } = getState();
-  const { data } = await beService.signup(username, email, password);
+  const { err } = await beService.signup(username, email, password);
+  if (err) throw new Error("Signup is invalid");
 
   return user;
 });
@@ -56,7 +54,8 @@ export const signup = createAsyncThunk<
 export const logout = createAsyncThunk<UserState, {}, { state: any }>(
   `${NAME}/logout`,
   async () => {
-    const { data } = await beService.logout();
+    const { err } = await beService.logout();
+    if (err) throw new Error(err.message);
     localStorage.removeItem("session_token");
 
     return initialState;
@@ -67,16 +66,16 @@ export const reLogin = createAsyncThunk<UserState, void, { state: any }>(
   `${NAME}/reLogin`,
   async (_, { getState }) => {
     const oldSessionToken = getAccessToken();
-    beApi.defaults.headers["Authorization"] = `Bearer ${oldSessionToken}`
+    if (!oldSessionToken) return;
+    beApi.defaults.headers["Authorization"] = `Bearer ${oldSessionToken}`;
     const { user } = getState();
 
-    if (oldSessionToken) {
-      const {
-        data: { email, session_token },
-      } = await beService.login("", "");
-      return { accessToken: session_token, email };
-    }
-    return { ...user };
+    const {
+      data: { email, session_token },
+      err,
+    } = await beService.login();
+    if (err) throw new Error(err.message);
+    return { ...user,session_token, email };
   }
 );
 
@@ -98,10 +97,10 @@ const slice = createSlice({
         signup.fulfilled,
         (state, { payload }) => void Object.assign(state, payload)
       )
-      // .addCase(
-      //   reLogin.fulfilled,
-      //   (state, { payload }) => void Object.assign(state, payload)
-      // )
+      .addCase(
+        reLogin.fulfilled,
+        (state, { payload }) => void Object.assign(state, payload)
+      )
       .addCase(
         logout.fulfilled,
         (state, { payload }) => void Object.assign(state, payload)

@@ -1,26 +1,32 @@
-import { Route, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Form, Input, Checkbox, Button, Row, Col } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
-import { login, } from 'store/users.controller'
+import { login } from "store/users.controller";
 import { AppDispatch } from "store";
 import { ROUTES } from "constant/routes";
-import config from "config";
-
 
 const Login = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
-  
-  const onLogin = async(values: any) => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onLogin = async (values: any) => {
+    setLoading(true);
     try {
-      const { email } = await dispatch(login({ email: values.email, password: values.password })).unwrap()
-    } catch (err) {
-      // notifyError(err)
-      console.log(err)
+      await dispatch(
+        login({ email: values.email, password: values.password })
+      ).unwrap();
+      navigate(ROUTES.HOME);
+    } catch (err: any) {
+      window.notify({
+        type: "error",
+        description: err.message ,
+      });
     } finally {
-      navigate(ROUTES.HOME)
+      setLoading(false);
     }
   };
 
@@ -50,23 +56,23 @@ const Login = () => {
           placeholder="Password"
         />
       </Form.Item>
-      <Form.Item >
+      <Form.Item>
         <Row>
           <Col flex={1}>
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
           </Col>
-          <Col>
-            <a className="login-form-forgot" href="">
-              Forgot password
-            </a>
-          </Col>
         </Row>
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="login-form-button"
+          loading={loading}
+        >
           Log in
         </Button>
       </Form.Item>

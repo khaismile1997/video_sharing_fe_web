@@ -1,45 +1,46 @@
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import Header from "components/header";
 import VideoCard from "components/videoCard";
+import VideoWatcher from "watcher/videoWatcher";
 
+import { useMeta, usePage, useVideos } from "hooks/useVideo";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "store";
 import { getListVideo } from "store/videos.controller";
-import { useVideos } from "hooks/useVideo";
-import { reLogin } from "store/users.controller";
+
 
 function Home() {
-  const dummyData = [1, 2, 3];
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(false)
   const videos = useVideos();
+  const meta = useMeta();
+  const page = usePage();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const fetchVideo = useCallback(async () => {
+  const onViewMore = async () => {
     setLoading(true);
     try {
-      const { page } = await dispatch(getListVideo({})).unwrap();
-    } catch (err) {
-      // notifyError(err)
-      console.log(err);
+      await dispatch(getListVideo({})).unwrap();
+    } catch (err: any) {
+      window.notify({
+        type: "error",
+        description: err.message,
+      });
     } finally {
       setLoading(false);
-      console.log("success");
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    fetchVideo();
-  }, [fetchVideo]);
 
   return (
     <Row gutter={[24, 24]} justify={"center"} style={{ marginBottom: 50 }}>
+      <VideoWatcher/>
       <Col span={24}>
         <Header />
       </Col>
       <Col span={16}>
-        <Row gutter={[12, 12]}>
+        <Row gutter={[12, 12]} justify={"center"}>
           {videos.map((val) => {
             return (
               <Col key={val.id}>
@@ -47,6 +48,9 @@ function Home() {
               </Col>
             );
           })}
+          <Col>
+            <Button disabled={page >= meta.total_pages} onClick={onViewMore} loading={loading}>View More</Button>
+          </Col>
         </Row>
       </Col>
     </Row>

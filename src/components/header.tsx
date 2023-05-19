@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { Button, Col, Modal, Row, Space, Typography } from "antd";
@@ -8,8 +7,8 @@ import SharingModal from "./sharingModal";
 
 import { useUser } from "hooks/useUser";
 import { AppDispatch } from "store";
-import { shareVideo } from "store/videos.controller";
 import { logout } from "store/users.controller";
+import { shareVideo } from "store/videos.controller";
 
 import "./index.css";
 
@@ -17,38 +16,35 @@ function Header() {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const { email } = useUser();
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const onShare = async (url: string) => {
     setLoading(true);
     try {
-      const { page } = await dispatch(shareVideo({ url })).unwrap();
+      await dispatch(shareVideo({ url })).unwrap();
       window.notify({
-        type: 'success',
-        description: 'Share video successfully!',
-      })
+        type: "success",
+        description: "Share video successfully!",
+      });
+      setOpenModal(false);
     } catch (err: any) {
       window.notify({
-        type: 'error',
+        type: "error",
         description: err.message,
-      })
+      });
     } finally {
       setLoading(false);
-      console.log("success");
     }
   };
 
   const onLogout = async () => {
-    // setLoading(true);
     try {
-      const { email } = await dispatch(logout({})).unwrap();
-    } catch (err) {
-      // notifyError(err)
-      console.log(err);
-    } finally {
-      // setLoading(false);
-      console.log("success");
+      await dispatch(logout({})).unwrap();
+    } catch (err: any) {
+      window.notify({
+        type: "error",
+        description: err.message,
+      });
     }
   };
 

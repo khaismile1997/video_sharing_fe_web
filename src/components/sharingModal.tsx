@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Col, Input, Row, Space, Typography } from "antd";
+import { Button, Col, Input, Row, Typography } from "antd";
 
 type SharingModalPros = {
   onShare: (url: string) => void;
@@ -29,7 +29,7 @@ function SharingModal({ onShare, loading }: SharingModalPros) {
       <Col>
         <Button
           onClick={(e) => {
-            e.stopPropagation();
+            // e.stopPropagation();
             onShare(url);
           }}
           type="primary"

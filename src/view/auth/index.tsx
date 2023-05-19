@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import {
-  Col,
-  Row,
-  Space,
-  Tabs,
-  Typography,
-  Image,
-} from "antd";
+import { Col, Row, Space, Tabs, Typography, Image } from "antd";
 import Login from "./login";
 import Signup from "./signup";
 
@@ -15,16 +9,24 @@ import YTLogo from "static/images/youtube.png";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store";
 import { reLogin } from "store/users.controller";
+import { useUser } from "hooks/useUser";
+import { ROUTES } from "constant/routes";
 
 type FormType = "signin" | "signup";
 
-const Auth =  () => {
+const Auth = () => {
+  const navigate = useNavigate();
+  const { session_token } = useUser();
   const dispatch = useDispatch<AppDispatch>();
   const [formType, setFormType] = useState<FormType>("signin");
 
-  // useEffect(()=>{
-  //   dispatch(reLogin()).unwrap()
-  // }, [])
+  useEffect(() => {
+    if (session_token) navigate(ROUTES.HOME);
+  }, [session_token, navigate]);
+
+  useEffect(() => {
+    dispatch(reLogin()).unwrap();
+  }, [dispatch]);
 
   return (
     <Row gutter={[24, 24]} justify={"center"}>
@@ -72,4 +74,4 @@ const Auth =  () => {
   );
 };
 
-export default Auth
+export default Auth;

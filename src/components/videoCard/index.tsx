@@ -1,21 +1,25 @@
-import { Col, Row, Image, Button, Typography, Space } from "antd";
-import { LikeOutlined } from "@ant-design/icons";
+import { Col, Row, Button, Typography, Space } from "antd";
+import {
+  LikeOutlined,
+  DislikeOutlined,
+  LikeFilled,
+  DislikeFilled,
+} from "@ant-design/icons";
 
-import YTLogo from "static/images/youtube.png";
 import YouTube, { YouTubeProps } from "react-youtube";
 
 import { useUser } from "hooks/useUser";
 import { useState } from "react";
 import { AppDispatch } from "store";
 import { useDispatch } from "react-redux";
-import { Video, like } from "store/videos.controller";
+import { Video, dislike, like, undislike, unlike } from "store/videos.controller";
 
 type VideoCardProps = {
   videoInfo: Video;
 };
 function VideoCard({ videoInfo }: VideoCardProps) {
   const [loadingLike, setLoadingLike] = useState(false);
-  const [loadingUnLike, setLoadingUnLike] = useState(false);
+  const [loadingDislike, setLoadingDislike] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const user = useUser();
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
@@ -32,19 +36,41 @@ function VideoCard({ videoInfo }: VideoCardProps) {
     },
   };
 
+  const onDislike = async (videoId: string) => {
+    setLoadingDislike(true);
+    try {
+      if(videoInfo.liked !== false) {
+        await dispatch(dislike({ videoId })).unwrap();
+      }else{
+        await dispatch(undislike({ videoId })).unwrap()
+      }
+    } catch (err: any) {
+      window.notify({
+        type: "error",
+        description: err.message,
+      });
+    } finally {
+      setLoadingDislike(false);
+    }
+  };
+
   const onLike = async (videoId: string) => {
     setLoadingLike(true);
     try {
-      const data = await dispatch(like({ videoId })).unwrap();
-    } catch (err) {
-      // notifyError(err)
-      console.log(err);
+      if(videoInfo.liked !== true) {
+        await dispatch(like({ videoId })).unwrap();
+      }else{
+        await dispatch(unlike({ videoId })).unwrap()
+      }
+    } catch (err: any) {
+      window.notify({
+        type: "error",
+        description: err.message,
+      });
     } finally {
       setLoadingLike(false);
     }
   };
-
-  console.log(videoInfo);
 
   return (
     <Row gutter={[36, 36]} wrap={false}>
@@ -74,20 +100,37 @@ function VideoCard({ videoInfo }: VideoCardProps) {
                     <LikeOutlined />
                   </Space>
                   <Space size={2}>
-                      <Typography.Text>
-                        {videoInfo.total_dislikes}
-                      </Typography.Text>
-                      <LikeOutlined />
-                    </Space>
+                    <Typography.Text>
+                      {videoInfo.total_dislikes}
+                    </Typography.Text>
+                    <DislikeOutlined />
+                  </Space>
                 </Space>
               </Col>
               <Col>
                 <Space size={4}>
                   <Button
-                    icon={<LikeOutlined />}
+                    icon={
+                      videoInfo.liked !== true ? (
+                        <LikeOutlined />
+                      ) : (
+                        <LikeFilled style={{ color: "#1677ff" }} />
+                      )
+                    }
                     onClick={async () => await onLike(videoInfo.id)}
+                    disabled={videoInfo.liked === false}
                   />
-                  <Button icon={<LikeOutlined />} />
+                  <Button
+                    icon={
+                      videoInfo.liked !== false ? (
+                        <DislikeOutlined />
+                      ) : (
+                        <DislikeFilled />
+                      )
+                    }
+                    disabled={videoInfo.liked === true}
+                    onClick={async () => await onDislike(videoInfo.id)}
+                  />
                 </Space>
               </Col>
             </Row>

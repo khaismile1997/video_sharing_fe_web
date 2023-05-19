@@ -1,12 +1,8 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Form,
-  Input,
-  Checkbox,
-  Button,
-} from "antd";
+import { Form, Input, Checkbox, Button } from "antd";
 
 import { AppDispatch } from "store";
 import { signup } from "store/users.controller";
@@ -37,24 +33,33 @@ const tailFormItemLayout = {
 };
 
 const Signup = () => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  const onSignup = async(values: any) => {
+  const onSignup = async (values: any) => {
+    setLoading(true);
     try {
-      const { email } = await dispatch(signup({username:values.nickname, email: values.email, password: values.password })).unwrap()
+      await dispatch(
+        signup({
+          username: values.nickname,
+          email: values.email,
+          password: values.password,
+        })
+      ).unwrap();
       window.notify({
-        type: 'success',
-        description: 'Sign up successfully!',
-      })
+        type: "success",
+        description: "Sign up successfully!",
+      });
+      navigate(ROUTES.LOGIN);
     } catch (err: any) {
       window.notify({
-        type: 'error',
+        type: "error",
         description: err.message,
-      })
+      });
     } finally {
-      navigate(ROUTES.LOGIN)
+      setLoading(false);
     }
   };
 
@@ -155,11 +160,11 @@ const Signup = () => {
         {...tailFormItemLayout}
       >
         <Checkbox>
-          I have read the <a href="">agreement</a>
+          I have read the <a href="check">agreement</a>
         </Checkbox>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
           Register
         </Button>
       </Form.Item>

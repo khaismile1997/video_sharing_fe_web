@@ -14,6 +14,7 @@ export type Video = {
   total_likes: number;
   total_dislikes: number;
   liked: boolean | null;
+  sharer_email: string;
 };
 
 export type VideoState = {

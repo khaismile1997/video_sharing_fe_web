@@ -93,7 +93,7 @@ function VideoCard({ videoInfo }: VideoCardProps) {
                 >
                   {videoInfo.title}
                 </Typography.Title>
-                <Typography.Text>Shared by: {user.email}</Typography.Text>
+                <Typography.Text>Shared by: {videoInfo.sharer_email}</Typography.Text>
                 <Space style={{ width: "100%" }} size={8}>
                   <Space size={2}>
                     <Typography.Text>{videoInfo.total_likes}</Typography.Text>

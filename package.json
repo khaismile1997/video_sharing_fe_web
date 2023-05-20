@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/pro-components": "^2.4.15",
+    "@rails/actioncable": "^7.0.4-3",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/rails__actioncable": "^6.1.6"
   }
 }

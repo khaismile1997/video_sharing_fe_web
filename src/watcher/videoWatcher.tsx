@@ -1,62 +1,59 @@
 import { useDispatch } from "react-redux";
-import { Fragment, useCallback, useEffect} from "react";
+import { Fragment, useCallback, useEffect } from "react";
 
 import { AppDispatch } from "store";
 import { getListVideo } from "store/videos.controller";
+import consumer from "../services/actionCable";
+import { useUser } from "hooks/useUser";
 
 const VideoWatcher = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const {session_token} = useUser()
 
   const fetchData = useCallback(async () => {
     try {
-      
-      await dispatch(getListVideo({ page: 1 })).unwrap();
+        if(!session_token) return
+        await dispatch(getListVideo({ page: 1 })).unwrap();
     } catch (err) {
       // notifyError(err)
       console.log(err);
     }
-  }, [dispatch]);
+  }, [dispatch, session_token]);
 
-  //   const watchData = useCallback(async () => {
-  // if (watchId) return
-  // const newWatcherId = connection.onProgramAccountChange(
-  //   accountClient.programId,
-  //   async (info) => {
-  //     const address = info.accountId.toBase58()
-  //     const buffer = info.accountInfo.data
-  //     const accountData = program.coder.accounts.decode(name, buffer)
-  //     upset(address, accountData)
-  //   },
-  //   'confirmed',
-  //   [
-  //     { dataSize: accountClient.size },
-  //     {
-  //       memcmp: {
-  //         offset: 0,
-  //         bytes: encodeIxData(accountDiscriminator(name)),
-  //       },
-  //     },
-  //     ...filter,
-  //   ],
-  // )
-  // setWatchId(newWatcherId)
-  //   }, [
+  // const watchData = useCallback(async () => {
 
-  //   ])
+  // }, [
+
+  // ])
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  //   useEffect(() => {
-  //     watchData()
-  //     return () => {
-  //       ;(async () => {
-  // if (!watchId) return
+  useEffect(() => {
+    const noticationsChannel = consumer.subscriptions.create(
+      { channel: "notifications" },
+      {
+        connected() {
+          // Called when the subscription is ready for use on the server
 
-  //       })()
-  //     }
-  //   }, [, watchData])
+          console.log("da connected ");
+        },
+
+        disconnected() {
+          // Called when the subscription has been terminated by the server
+          console.log("da disconnected ");
+        },
+
+        received(data) {
+          console.log("da received ", data);
+        },
+      }
+    );
+    return () => {
+      noticationsChannel.unsubscribe();
+    };
+  }, []);
 
   return <Fragment />;
 };

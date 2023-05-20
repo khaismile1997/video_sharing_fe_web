@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 
 import { Col, Layout, Row } from "antd";
-import { Content, Footer } from "antd/lib/layout/layout";
+import { Content } from "antd/lib/layout/layout";
 import UILoader from "uiloader";
 import Auth from "./auth";
 import Home from "./home";
@@ -24,7 +24,7 @@ const App: React.FC = () => {
     if (!user.session_token) {
       return navigate(ROUTES.LOGIN);
     }
-  }, [user.session_token])
+  }, [user.session_token, navigate])
 
   return (
     <UILoader>

@@ -55,7 +55,7 @@ const VideoWatcher = () => {
     return () => {
       noticationsChannel.unsubscribe();
     };
-  }, []);
+  }, [email]);
 
   return <Fragment />;
 };

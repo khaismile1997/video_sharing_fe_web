@@ -1,3 +1,8 @@
 import { createConsumer } from "@rails/actioncable"
+import { getAccessToken } from 'services/utils'
 
-export default createConsumer('ws://localhost:3001/cable')
+const token = getAccessToken()
+
+const url = `ws://localhost:3001/cable?token=${encodeURIComponent(token)}`;
+
+export default createConsumer(url)

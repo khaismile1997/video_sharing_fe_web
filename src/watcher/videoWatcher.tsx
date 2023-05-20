@@ -32,21 +32,21 @@ const VideoWatcher = () => {
 
   useEffect(() => {
     const noticationsChannel = consumer.subscriptions.create(
-      { channel: "notifications" },
+      { channel: 'NotificationsChannel' },
       {
         connected() {
-          // Called when the subscription is ready for use on the server
-
-          console.log("da connected ");
+          console.log("connected");
         },
 
         disconnected() {
-          // Called when the subscription has been terminated by the server
-          console.log("da disconnected ");
+          console.log("disconnected");
         },
 
         received(data) {
-          console.log("da received ", data);
+          window.notify({
+            type: "info",
+            description: `${data.sharer_email} shared the video ${data.video_title}`,
+          });
         },
       }
     );

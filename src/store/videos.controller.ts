@@ -60,9 +60,9 @@ export const getListVideo = createAsyncThunk<
 >(`${NAME}/getListVideo`, async ({ page }, { getState }) => {
   const { videos } = getState();
 
-  const { data, err } = await beService.getvideos(page || videos.page);
+  const { data, err } = await beService.getvideos(page || videos.page + 1);
   if (err || !data) return { ...videos };
-  if ((page = 1))
+  if (page === 1)
     return { page: page, videoList: [...data.data], meta: { ...data.meta } };
   return {
     page: page || videos.page + 1,

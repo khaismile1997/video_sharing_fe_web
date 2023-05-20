@@ -22,7 +22,6 @@ function VideoCard({ videoInfo }: VideoCardProps) {
   const [loadingDislike, setLoadingDislike] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const user = useUser();
-  console.log(loadingLike, loadingDislike)
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     // access to player in all event handlers via event.target
     // event.target.pauseVideo();
@@ -74,15 +73,15 @@ function VideoCard({ videoInfo }: VideoCardProps) {
   };
 
   return (
-    <Row gutter={[36, 36]} wrap={false}>
-      <Col>
+    <Row gutter={[36, 36]} >
+      <Col span={8}>
         <YouTube
           videoId={videoInfo.url?.substring(videoInfo.url.length - 11)}
           opts={opts}
           onReady={onPlayerReady}
         />
       </Col>
-      <Col flex={1}>
+      <Col xxl={16}>
         <Row gutter={[12, 12]}>
           <Col span={24}>
             <Row gutter={[8, 8]} wrap={false}>

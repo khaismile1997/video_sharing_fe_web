@@ -8,12 +8,12 @@ import { useUser } from "hooks/useUser";
 
 const VideoWatcher = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {session_token} = useUser()
+  const { session_token, email } = useUser();
 
   const fetchData = useCallback(async () => {
     try {
-        if(!session_token) return
-        await dispatch(getListVideo({ page: 1 })).unwrap();
+      if (!session_token) return;
+      await dispatch(getListVideo({ page: 1 })).unwrap();
     } catch (err) {
       // notifyError(err)
       console.log(err);
@@ -32,7 +32,7 @@ const VideoWatcher = () => {
 
   useEffect(() => {
     const noticationsChannel = consumer.subscriptions.create(
-      { channel: 'NotificationsChannel' },
+      { channel: "NotificationsChannel" },
       {
         connected() {
           console.log("connected");
@@ -43,10 +43,12 @@ const VideoWatcher = () => {
         },
 
         received(data) {
-          window.notify({
-            type: "info",
-            description: `${data.sharer_email} shared the video ${data.video_title}`,
-          });
+          if (data.sharer_email !== email) {
+            window.notify({
+              type: "info",
+              description: `${data.sharer_email} shared the video ${data.video_title}`,
+            });
+          }
         },
       }
     );

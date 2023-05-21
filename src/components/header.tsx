@@ -52,7 +52,7 @@ function Header() {
     <Row
       gutter={[24, 24]}
       align="middle"
-      style={{ borderBottom: "2px solid black" }}
+      style={{ borderBottom: "2px solid black" , paddingBottom: 20}}
     >
       <Col flex={1}>
         <Space align="center">
@@ -61,7 +61,7 @@ function Header() {
         </Space>
       </Col>
       <Col>
-        <Row gutter={[16, 16]} align="middle">
+        <Row gutter={[16, 16]} align="middle" >
           <Col flex={1}>
             <Typography.Text>Welcome {email}</Typography.Text>
           </Col>

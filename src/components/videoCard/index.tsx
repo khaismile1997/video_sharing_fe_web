@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { AppDispatch } from "store";
+import { useDispatch } from "react-redux";
+
 import { Col, Row, Button, Typography, Space } from "antd";
 import {
   LikeOutlined,
@@ -8,10 +12,6 @@ import {
 
 import YouTube, { YouTubeProps } from "react-youtube";
 
-import { useUser } from "hooks/useUser";
-import { useState } from "react";
-import { AppDispatch } from "store";
-import { useDispatch } from "react-redux";
 import { Video, dislike, like, undislike, unlike } from "store/videos.controller";
 
 type VideoCardProps = {
@@ -21,15 +21,14 @@ function VideoCard({ videoInfo }: VideoCardProps) {
   const [loadingLike, setLoadingLike] = useState(false);
   const [loadingDislike, setLoadingDislike] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const user = useUser();
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     // access to player in all event handlers via event.target
     // event.target.pauseVideo();
   };
 
   const opts: YouTubeProps["opts"] = {
-    height: "200",
-    width: "300",
+    height: "300",
+    width: "100%",
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 0,
@@ -74,14 +73,14 @@ function VideoCard({ videoInfo }: VideoCardProps) {
 
   return (
     <Row gutter={[36, 36]} >
-      <Col span={8}>
+      <Col xs={24} sm={10} >
         <YouTube
           videoId={videoInfo.url?.substring(videoInfo.url.length - 11)}
           opts={opts}
           onReady={onPlayerReady}
         />
       </Col>
-      <Col xxl={16}>
+      <Col sm={14} xs={24}>
         <Row gutter={[12, 12]}>
           <Col span={24}>
             <Row gutter={[8, 8]} wrap={false}>
@@ -138,7 +137,7 @@ function VideoCard({ videoInfo }: VideoCardProps) {
           <Col span={24}>
             <Space style={{ width: "100%" }} direction="vertical" size={8}>
               <Typography.Text strong>Description</Typography.Text>
-              <Typography.Paragraph ellipsis={{ rows: 3 }}>
+              <Typography.Paragraph >
                 {videoInfo.description}
               </Typography.Paragraph>
             </Space>

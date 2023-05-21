@@ -39,7 +39,7 @@ function Home() {
       <Col span={24}>
         <Header />
       </Col>
-      <Col span={16}>
+      <Col span={24}>
         <Row gutter={[12, 12]} justify={"center"}>
           {videos.map((val) => {
             return (

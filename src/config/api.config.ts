@@ -5,7 +5,8 @@ import { Env } from './env'
  */
 
 type Config = {
-  beAPI: string
+  beAPI: string,
+  cableURL: string,
 }
 
 const configs: Record<Env, Config> = {
@@ -14,6 +15,7 @@ const configs: Record<Env, Config> = {
    */
   development: {
     beAPI: 'http://localhost:3001/api/v1/',
+    cableURL: 'ws://localhost:3001/cable',
   },
 
   /**
@@ -21,13 +23,15 @@ const configs: Record<Env, Config> = {
    */
   test: {
     beAPI: 'http://localhost:3001/api/v1/',
+    cableURL: 'ws://localhost:3001/cable',
   },
 
   /**
    * Production configurations
    */
   production: {
-    beAPI: 'http://localhost:3001/api/v1/',
+    beAPI: 'https://video-sharing-web.herokuapp.com/api/v1/',
+    cableURL: 'wss://video-sharing-web.herokuapp.com/cable',
   },
 }
 

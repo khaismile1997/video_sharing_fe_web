@@ -31,7 +31,7 @@ const configs: Record<Env, Config> = {
    */
   production: {
     beAPI: 'https://video-sharing-web.herokuapp.com/api/v1/',
-    cableURL: 'wss://example.com/cable',
+    cableURL: 'wss://video-sharing-web.herokuapp.com/cable',
   },
 }
 

@@ -3,10 +3,11 @@ import { Fragment, useCallback, useEffect } from "react";
 
 import { AppDispatch } from "store";
 import { getListVideo } from "store/videos.controller";
-import consumer from "../services/actionCable";
 import { useUser } from "hooks/useUser";
+import { useCable } from "hooks/useCable";
 
 const VideoWatcher = () => {
+  const consumer = useCable()
   const dispatch = useDispatch<AppDispatch>();
   const { session_token, email } = useUser();
 
@@ -15,16 +16,9 @@ const VideoWatcher = () => {
       if (!session_token) return;
       await dispatch(getListVideo({ page: 1 })).unwrap();
     } catch (err) {
-      // notifyError(err)
       console.log(err);
     }
   }, [dispatch, session_token]);
-
-  // const watchData = useCallback(async () => {
-
-  // }, [
-
-  // ])
 
   useEffect(() => {
     fetchData();
@@ -55,7 +49,7 @@ const VideoWatcher = () => {
     return () => {
       noticationsChannel.unsubscribe();
     };
-  }, [email]);
+  }, [consumer.subscriptions, email]);
 
   return <Fragment />;
 };
